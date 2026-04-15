@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cyber Quiz - CyberShield</title>
+
+<style>
+    /* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 40px;
+    background: rgba(0,0,0,0.4);
+    border-bottom: 1px solid rgba(0,255,204,0.2);
+}
+
+.logo {
+    color: #00ffcc;
+    animation: neonPulse 2s infinite;
+}
+
+/* Links */
+.navbar ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+.navbar ul li a {
+    color: white;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.navbar ul li a:hover {
+    color: #00ffcc;
+    text-shadow: 0 0 10px #00ffcc;
+}
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI'; }
+
+body {
+    background: linear-gradient(135deg,#0a0f1c,#111827);
+    color:white;
+    text-align:center;
+}
+
+/* Neon */
+@keyframes neonPulse {
+    0% { text-shadow:0 0 5px #00ffcc; }
+    50% { text-shadow:0 0 20px #00ffcc,0 0 40px #00ffcc; }
+    100% { text-shadow:0 0 5px #00ffcc; }
+}
+
+header h1 {
+    color:#00ffcc;
+    animation: neonPulse 2s infinite;
+    padding:20px;
+}
+
+/* Container */
+.quiz-container {
+    max-width:600px;
+    margin:50px auto;
+    padding:30px;
+    background:rgba(255,255,255,0.05);
+    border-radius:15px;
+}
+
+/* Progress */
+.progress {
+    height:8px;
+    background:#222;
+    border-radius:10px;
+    margin-bottom:20px;
+}
+
+.progress-bar {
+    height:100%;
+    background:#00ffcc;
+    width:0%;
+    border-radius:10px;
+    transition:0.3s;
+}
+
+/* Timer */
+.timer {
+    margin-bottom:10px;
+    color:#00ffcc;
+}
+
+/* Options */
+.option {
+    display:block;
+    margin:10px 0;
+    padding:10px;
+    border:1px solid rgba(0,255,204,0.3);
+    border-radius:8px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.option:hover { background:rgba(0,255,204,0.1); }
+
+.correct {
+    background:rgba(0,255,0,0.2);
+}
+
+.wrong {
+    background:rgba(255,0,0,0.2);
+}
+
+/* Button */
+button {
+    margin-top:20px;
+    padding:10px 20px;
+    background:rgba(0,255,204,0.1);
+    border:1px solid rgba(0,255,204,0.3);
+    color:white;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+button:hover { box-shadow:0 0 10px #00ffcc; }
+</style>
+
+</head>
+<body>
+    <nav class="navbar">
+    <h2 class="logo">🛡️ CyberShield</h2>
+    <ul>
+       <li><a href="index.html">Home</a></li>
+        <li><a href="phishing.html">Phishing Detector</a></li>
+        <li><a href="password.html">Password Checker</a></li>
+        <li><a href="malware.html">Malware Info</a></li>
+        <li><a href="quiz.html">Quiz</a></li>
+    </ul>
+</nav>
+
+<header>
+<h1>🛡️ CyberShield Quiz</h1>
+</header>
+
+<div class="quiz-container" id="quizBox">
+
+<div class="progress">
+<div class="progress-bar" id="progressBar"></div>
+</div>
+
+<div class="timer" id="timer">Time: 10s</div>
+
+<h2 id="question"></h2>
+<div id="options"></div>
+
+<button onclick="nextQuestion()">Next</button>
+
+</div>
+
+<script>
+const quiz = [
+{q:"What does malware do?",options:["Protect system","Damages system","Speeds up computer"],answer:1},
+{q:"What is phishing?",options:["Fishing method","Fake email attack","Firewall"],answer:1},
+{q:"Ransomware does?",options:["Locks files","Boosts speed","Deletes OS"],answer:0},
+{q:"Strong password?",options:["Numbers only","Letters only","Mix of all"],answer:2},
+{q:"Firewall?",options:["Security system","Virus","Malware"],answer:0}
+];
+
+let index=0, score=0, selected=null, timeLeft=10, timer;
+
+function loadQuestion(){
+    selected=null;
+    timeLeft=10;
+    document.getElementById("timer").innerText="Time: 10s";
+
+    document.getElementById("question").innerText=quiz[index].q;
+
+    let html="";
+    quiz[index].options.forEach((opt,i)=>{
+        html+=`<div class="option" onclick="selectOption(this,${i})">${opt}</div>`;
+    });
+
+    document.getElementById("options").innerHTML=html;
+
+    updateProgress();
+    startTimer();
+}
+
+function selectOption(el,i){
+    selected=i;
+
+    let opts=document.querySelectorAll(".option");
+
+    opts.forEach((o,idx)=>{
+        if(idx===quiz[index].answer) o.classList.add("correct");
+        if(idx===i && i!==quiz[index].answer) o.classList.add("wrong");
+    });
+
+    clearInterval(timer);
+}
+
+function nextQuestion(){
+    if(selected===quiz[index].answer) score++;
+    index++;
+
+    if(index<quiz.length){
+        loadQuestion();
+    } else {
+        showResult();
+    }
+}
+
+function updateProgress(){
+    let p=(index/quiz.length)*100;
+    document.getElementById("progressBar").style.width=p+"%";
+}
+
+function startTimer(){
+    timer=setInterval(()=>{
+        timeLeft--;
+        document.getElementById("timer").innerText="Time: "+timeLeft+"s";
+
+        if(timeLeft===0){
+            clearInterval(timer);
+            nextQuestion();
+        }
+    },1000);
+}
+
+function showResult(){
+    clearInterval(timer);
+
+    let percent=Math.round((score/quiz.length)*100);
+
+    if(percent>=90){
+        document.getElementById("quizBox").innerHTML=`
+        <h2>🎉 Congratulations!</h2>
+        <p>You scored ${score}/${quiz.length} (${percent}%)</p>
+        <p>🔥 You are a Cyber Security Expert!</p>
+        <button onclick="restartQuiz()">Play Again</button>
+        `;
+    } else {
+        document.getElementById("quizBox").innerHTML=`
+        <h2>⚠️ Try Again</h2>
+        <p>You scored ${score}/${quiz.length} (${percent}%)</p>
+        <p>Improve your cybersecurity knowledge!</p>
+        <button onclick="restartQuiz()">Try Again</button>
+        `;
+    }
+}
+
+function restartQuiz(){
+    index=0;
+    score=0;
+    selected=null;
+
+    document.getElementById("quizBox").innerHTML=`
+    <div class="progress">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <div class="timer" id="timer">Time: 10s</div>
+
+    <h2 id="question"></h2>
+    <div id="options"></div>
+
+    <button onclick="nextQuestion()">Next</button>
+    `;
+
+    loadQuestion();
+}
+
+loadQuestion();
+</script>
+
+</body>
+</html>

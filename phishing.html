@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phishing Detector - CyberShield</title>
+
+<style>
+* {
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI', sans-serif;
+}
+
+/* Body */
+body {
+    background: linear-gradient(135deg,#0a0f1c,#111827);
+    color:white;
+    padding-top:80px;
+}
+
+/* Navbar */
+.navbar {
+    position: fixed;
+    top:0;
+    left:0;
+    width:100%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:15px 40px;
+    background:rgba(0,0,0,0.6);
+    border-bottom:1px solid rgba(0,255,204,0.2);
+    z-index:1000;
+}
+
+.logo {
+    color:#00ffcc;
+}
+
+/* Nav Links */
+.navbar ul {
+    list-style:none;
+    display:flex;
+    gap:20px;
+}
+
+.navbar ul li a {
+    color:white;
+    text-decoration:none;
+    transition:0.3s;
+}
+
+.navbar ul li a:hover {
+    color:#00ffcc;
+}
+
+/* Container */
+.container {
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:80vh;
+}
+
+/* Card */
+.card {
+    background:rgba(255,255,255,0.05);
+    padding:30px;
+    border-radius:15px;
+    text-align:center;
+    width:350px;
+    border:1px solid rgba(0,255,204,0.2);
+}
+
+/* Input */
+input {
+    padding:12px;
+    width:100%;
+    margin:10px 0;
+    border-radius:5px;
+    border:none;
+}
+
+/* Neon Button */
+button {
+    padding:12px 20px;
+    background:#00ffcc;
+    border:none;
+    cursor:pointer;
+    border-radius:5px;
+    width:100%;
+    color:black;
+    font-weight:bold;
+    transition:0.3s;
+    animation: neonGlow 2s infinite;
+}
+
+/* Neon Pulse Animation */
+@keyframes neonGlow {
+    0% {
+        box-shadow: 0 0 5px #00ffcc;
+    }
+    50% {
+        box-shadow: 0 0 20px #00ffcc, 0 0 40px #00ffcc;
+    }
+    100% {
+        box-shadow: 0 0 5px #00ffcc;
+    }
+}
+
+/* Hover Effect */
+button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 25px #00ffcc, 0 0 50px #00ffcc;
+}
+
+/* Loader */
+.loader {
+    border:4px solid #222;
+    border-top:4px solid #00ffcc;
+    border-radius:50%;
+    width:40px;
+    height:40px;
+    margin:15px auto;
+    animation: spin 1s linear infinite;
+    display:none;
+}
+
+@keyframes spin {
+    0% { transform:rotate(0deg); }
+    100% { transform:rotate(360deg); }
+}
+
+/* Meter */
+.meter {
+    height:10px;
+    background:#222;
+    border-radius:10px;
+    margin-top:15px;
+}
+
+#bar {
+    height:100%;
+    width:0%;
+    background:#00ffcc;
+    border-radius:10px;
+    transition:0.3s;
+}
+
+/* Result */
+#result {
+    margin-top:15px;
+    font-weight:bold;
+}
+</style>
+
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <h2 class="logo">🛡️ CyberShield</h2>
+    <ul>
+       <li><a href="index.html">Home</a></li>
+        <li><a href="phishing.html">Phishing Detector</a></li>
+        <li><a href="password.html">Password Checker</a></li>
+        <li><a href="malware.html">Malware Info</a></li>
+        <li><a href="quiz.html">Quiz</a></li>
+    </ul>
+</nav>
+
+<!-- Content -->
+<div class="container">
+
+<div class="card">
+    <h2>🎣 Phishing URL Detector</h2>
+    <p>Analyze any website and detect potential threats instantly</p>
+
+    <input type="text" id="urlInput" placeholder="Enter URL here...">
+    <button onclick="checkPhishing()">Analyze</button>
+
+    <!-- Loader -->
+    <div class="loader" id="loader"></div>
+
+    <div class="meter">
+        <div id="bar"></div>
+    </div>
+
+    <div id="result"></div>
+</div>
+
+</div>
+
+<script>
+function checkPhishing() {
+    const url = document.getElementById("urlInput").value;
+    const result = document.getElementById("result");
+    const bar = document.getElementById("bar");
+    const loader = document.getElementById("loader");
+
+    if (url === "") {
+        result.innerText = "⚠️ Please enter a URL";
+        result.style.color = "orange";
+        return;
+    }
+
+    result.innerText = "";
+    bar.style.width = "0%";
+    loader.style.display = "block";
+
+    let progress = 0;
+
+    let scan = setInterval(() => {
+        progress += 10;
+        bar.style.width = progress + "%";
+
+        if (progress >= 100) {
+            clearInterval(scan);
+            loader.style.display = "none";
+
+            if (url.includes("http://") || url.includes("@") || url.includes("-")) {
+                result.innerText = "⚠️ Suspicious Website Detected!";
+                result.style.color = "red";
+            } else {
+                result.innerText = "✅ Website looks Safe";
+                result.style.color = "#00ffcc";
+            }
+        }
+    }, 200);
+}
+</script>
+
+</body>
+</html>
